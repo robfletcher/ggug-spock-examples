@@ -6,7 +6,7 @@ import org.junit.experimental.theories.*
 import static org.hamcrest.Matchers.*
 
 @RunWith(Theories)
-class RomanNumeralFormatterTest {
+class RomanNumeralFormatterTheoryTest {
 	
 	@DataPoints static Map.Entry<Integer, String>[] data() {
 		[(1): "I",
