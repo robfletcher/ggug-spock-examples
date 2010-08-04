@@ -12,6 +12,9 @@ class Totalizer {
 		total
 	}
 	
+	String toString() {
+		"Totalizer[total=$total]"
+	}
 }
 
 enum Product {

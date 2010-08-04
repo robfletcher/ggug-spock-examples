@@ -2,10 +2,10 @@ package ggug.interactions
 
 interface Directory {
 	
-	void insertRecord(String name)
+	void insert(String name)
 	
-	List<String> findRecords(String query)
+	List<String> search(String query)
 	
-	String findRecord(int id)
+	String lookup(int id)
 	
 }

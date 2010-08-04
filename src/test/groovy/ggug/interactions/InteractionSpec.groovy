@@ -20,7 +20,7 @@ class InteractionSpec extends Specification {
 		register.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
 		
 		then:
-		1 * directory.insertRecord("Rob Fletcher")
+		1 * directory.insert("Rob Fletcher")
 		1 * mailer.sendMessage("rob@energizedwork.com", "Welcome Rob!")
 	}
 	
@@ -29,7 +29,7 @@ class InteractionSpec extends Specification {
 		register.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
 		
 		then:
-		1 * directory.insertRecord("Rob Fletcher")
+		1 * directory.insert("Rob Fletcher")
 	}
 	
 	def "interactions can use wildcards and argument matching syntax"() {
@@ -37,7 +37,7 @@ class InteractionSpec extends Specification {
 		register.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
 		
 		then:
-		_ * directory.insertRecord(_)
+		_ * directory.insert(_)
 		1 * _.sendMessage(!null, { it =~ /^Welcome/ })
 	}
 	
@@ -46,7 +46,7 @@ class InteractionSpec extends Specification {
 		register.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
 		
 		then:
-		(1.._) * directory.insertRecord("Rob Fletcher")
+		(1.._) * directory.insert("Rob Fletcher")
 		(_..1) * mailer.sendMessage("rob@energizedwork.com", "Welcome Rob!")
 	}
 	
@@ -55,7 +55,7 @@ class InteractionSpec extends Specification {
 		register.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
 		
 		then:
-		1 * directory.insertRecord("Rob Fletcher")
+		1 * directory.insert("Rob Fletcher")
 		0 * directory._
 	}
 	
@@ -64,10 +64,19 @@ class InteractionSpec extends Specification {
 		def names = register.findPeople("Ro")
 		
 		then:
-		1 * directory.findRecords("Ro") >> ["Rob Fletcher", "Ronald McDonald"]
+		1 * directory.search("Ro") >> ["Rob Fletcher", "Ronald McDonald"]
 		
 		and:
 		names == ["Rob Fletcher", "Ronald McDonald"]
+	}
+	
+	def "can stub an interaction"() {
+		given:
+		directory.search("Ro") >> ["Rob Fletcher", "Ronald McDonald"]
+		directory.search("Gu") >> ["Gus Power", "Gustavo Potenza"]
+		
+		expect:
+		register.findPeople("Ro") == ["Rob Fletcher", "Ronald McDonald"]
 	}
 	
 	def "can specify that no further interactions take place"() {
@@ -75,7 +84,7 @@ class InteractionSpec extends Specification {
 		def names = register.findPeople("Ro")
 		
 		then:
-		1 * directory.findRecords("Ro") >> ["Rob Fletcher", "Ronald McDonald"]
+		1 * directory.search("Ro") >> ["Rob Fletcher", "Ronald McDonald"]
 		0 * _
 	}
 	
@@ -84,7 +93,7 @@ class InteractionSpec extends Specification {
 		def names = register.findPeople("Ro")
 		
 		then:
-		1 * directory.findRecords("Ro")
+		1 * directory.search("Ro")
 		
 		and:
 		names == null
@@ -98,7 +107,7 @@ class InteractionSpec extends Specification {
 		def names = register.findPeople("Ro")
 		
 		then:
-		1 * directory.findRecords(_) >> { query -> allUsers.findAll { it.startsWith(query) } }
+		1 * directory.search(_) >> { query -> allUsers.findAll { it.startsWith(query) } }
 	
 		and:
 		names == ["Rob Fletcher"]
@@ -109,7 +118,7 @@ class InteractionSpec extends Specification {
 		def names = register.findPeople("Ro")
 		
 		then:
-		1 * directory.findRecords("Ro") >> { throw new IllegalArgumentException() }
+		1 * directory.search("Ro") >> { throw new IllegalArgumentException() }
 	
 		and:
 		names == []
@@ -117,7 +126,7 @@ class InteractionSpec extends Specification {
 	
 	def "mocked methods can be given a series of return values"() {
 		setup:
-		directory.findRecord(_) >>> ["Rob Fletcher", "Gus Power", "Glenn Saqui"]
+		directory.lookup(_) >>> ["Rob Fletcher", "Gus Power", "Glenn Saqui"]
 		
 		expect:
 		register.randomUser() == "Rob Fletcher"
