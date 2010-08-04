@@ -15,16 +15,18 @@ class AsyncInteractionSpec extends Specification {
 		queue.mailer = Mock(Mailer)
 		
 		and:
-		def email = new BlockingVariable()
+		def email = new BlockingVariables()
 		queue.mailer.sendMessage(_, _) >> { recipient, message ->
-			email.set((recipient): message)
+			email.recipient = recipient
+			email.message = message
 	 	}
 		
 		when:
 		queue.sendMessage("o hai")
 		
 		then:
-		email.get() == ["dlq@energizedwork.com": "o hai"]
+		email.recipient == "dlq@energizedwork.com"
+		email.message == "o hai"
 	}
 
 }
