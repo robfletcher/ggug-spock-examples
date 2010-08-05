@@ -1,5 +1,7 @@
 apply plugin: "groovy"
 
+defaultTasks "test"
+
 repositories {
 	mavenCentral()
 	mavenRepo urls: "http://m2repo.spockframework.org/snapshots"
