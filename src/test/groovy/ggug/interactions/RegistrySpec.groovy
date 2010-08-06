@@ -3,21 +3,21 @@ package ggug.interactions
 import java.util.regex.*
 import spock.lang.*
 
-class InteractionSpec extends Specification {
+class RegistrySpec extends Specification {
 	
-	def register = new Register()
+	def registry = new Registry()
 	
 	def directory = Mock(Directory)
 	def mailer = Mock(Mailer)
 	
 	def setup() {
-		register.directory = directory
-		register.mailer = mailer
+		registry.directory = directory
+		registry.mailer = mailer
 	}
 	
 	def "can verify interactions take place"() {
 		when:
-		register.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
+		registry.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
 		
 		then:
 		1 * directory.insert("Rob Fletcher")
@@ -26,7 +26,7 @@ class InteractionSpec extends Specification {
 	
 	def "unspecified interactions are ignored"() {
 		when:
-		register.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
+		registry.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
 		
 		then:
 		1 * directory.insert("Rob Fletcher")
@@ -34,7 +34,7 @@ class InteractionSpec extends Specification {
 	
 	def "interactions can use wildcards and argument matching syntax"() {
 		when:
-		register.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
+		registry.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
 		
 		then:
 		_ * directory.insert(_)
@@ -43,7 +43,7 @@ class InteractionSpec extends Specification {
 	
 	def "interactions can use ranges for cardinality"() {
 		when:
-		register.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
+		registry.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
 		
 		then:
 		(1.._) * directory.insert("Rob Fletcher")
@@ -52,7 +52,7 @@ class InteractionSpec extends Specification {
 	
 	def "can verify that only the specified interactions take place"() {
 		when:
-		register.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
+		registry.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
 		
 		then:
 		1 * directory.insert("Rob Fletcher")
@@ -61,7 +61,7 @@ class InteractionSpec extends Specification {
 	
 	def "can mock the return value of an interaction"() {
 		when:
-		def names = register.findPeople("Ro")
+		def names = registry.findPeople("Ro")
 		
 		then:
 		1 * directory.search("Ro") >> ["Rob Fletcher", "Ronald McDonald"]
@@ -76,12 +76,12 @@ class InteractionSpec extends Specification {
 		directory.search("Gu") >> ["Gus Power", "Gustavo Potenza"]
 		
 		expect:
-		register.findPeople("Ro") == ["Rob Fletcher", "Ronald McDonald"]
+		registry.findPeople("Ro") == ["Rob Fletcher", "Ronald McDonald"]
 	}
 	
 	def "can specify that no further interactions take place"() {
 		when:
-		def names = register.findPeople("Ro")
+		def names = registry.findPeople("Ro")
 		
 		then:
 		1 * directory.search("Ro") >> ["Rob Fletcher", "Ronald McDonald"]
@@ -90,7 +90,7 @@ class InteractionSpec extends Specification {
 	
 	def "mocked methods return default values if not specified"() {
 		when:
-		def names = register.findPeople("Ro")
+		def names = registry.findPeople("Ro")
 		
 		then:
 		1 * directory.search("Ro")
@@ -104,7 +104,7 @@ class InteractionSpec extends Specification {
 		def allUsers = ["Rob Fletcher", "Gus Power", "Glenn Saqui"]
 		
 		when:
-		def names = register.findPeople("Ro")
+		def names = registry.findPeople("Ro")
 		
 		then:
 		1 * directory.search(_) >> { query -> allUsers.findAll { it.startsWith(query) } }
@@ -115,7 +115,7 @@ class InteractionSpec extends Specification {
 	
 	def "mocked methods can throw exceptions"() {
 		when:
-		def names = register.findPeople("Ro")
+		def names = registry.findPeople("Ro")
 		
 		then:
 		1 * directory.search("Ro") >> { throw new IllegalArgumentException() }
@@ -129,10 +129,10 @@ class InteractionSpec extends Specification {
 		directory.lookup(_) >>> ["Rob Fletcher", "Gus Power", "Glenn Saqui"]
 		
 		expect:
-		register.randomUser() == "Rob Fletcher"
-		register.randomUser() == "Gus Power"
-		register.randomUser() == "Glenn Saqui"
-		register.randomUser() == "Glenn Saqui"
+		registry.randomUser() == "Rob Fletcher"
+		registry.randomUser() == "Gus Power"
+		registry.randomUser() == "Glenn Saqui"
+		registry.randomUser() == "Glenn Saqui"
 	}
 	
 }

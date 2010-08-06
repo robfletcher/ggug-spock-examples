@@ -5,7 +5,7 @@ import spock.lang.*
 import spock.util.concurrent.*
 import ggug.interactions.*
 
-class AsyncInteractionSpec extends Specification {
+class MessageQueueSpec extends Specification {
 
 	def queue = new MessageQueue()
 

@@ -2,7 +2,7 @@ package ggug.interactions
 
 import static java.util.Collections.*
 
-class Register {
+class Registry {
 	
 	def directory
 	def mailer

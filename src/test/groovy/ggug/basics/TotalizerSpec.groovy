@@ -3,7 +3,7 @@ package ggug.basics
 import spock.lang.*
 import static ggug.basics.Product.*
 
-class FirstSpec extends Specification {
+class TotalizerSpec extends Specification {
 	
 	def totalizer = new Totalizer()
 	
