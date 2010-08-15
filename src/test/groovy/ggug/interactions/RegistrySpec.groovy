@@ -24,6 +24,17 @@ class RegistrySpec extends Specification {
 		1 * mailer.sendMessage("rob@energizedwork.com", "Welcome Rob!")
 	}
 	
+	def "can specify interactions must occur in order"() {
+		when:
+		registry.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
+		
+		then:
+		1 * directory.insert("Rob Fletcher")
+		
+		then:
+		1 * mailer.sendMessage("rob@energizedwork.com", "Welcome Rob!")
+	}
+	
 	def "unspecified interactions are ignored"() {
 		when:
 		registry.addPerson("Rob", "Fletcher", "rob@energizedwork.com")
@@ -102,14 +113,12 @@ class RegistrySpec extends Specification {
 	def "mocked methods can have custom return values"() {
 		given:
 		def allUsers = ["Rob Fletcher", "Gus Power", "Glenn Saqui"]
-		
+		directory.search(_) >> { query -> allUsers.findAll { it.startsWith(query) } }
+	
 		when:
 		def names = registry.findPeople("Ro")
 		
 		then:
-		1 * directory.search(_) >> { query -> allUsers.findAll { it.startsWith(query) } }
-	
-		and:
 		names == ["Rob Fletcher"]
 	}
 	
